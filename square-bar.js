@@ -1,28 +1,47 @@
 var boxheight = 10;
-/*var data = [];
-for (i=0; i < 100; i++) {
-  data.push({
-    a : ((Math.random() * 30) | 0),
-    b : ((Math.random() * 30) | 0),
-    c : ((Math.random() * 30) | 0)
-  });
-}
-*/
-boxheight=boxheight;
-var data=[10,20,42,30,49,15,88,72,19,56];
-var margin = {top: 20, right: 20, bottom: 80, left: 40},
-    width = boxheight * data.length*2;
 
-var translate = function(x,y){               
+var data=[10,20,97,42,30,49,15,88,72,100];
+var margin = {top: 200, right: 200, bottom: 20, left: 200},
+    width = 600
+
+var translate = function(x,y){
   return "translate(" + x + "," + y + ")";
 }
-
+/*
 var x = d3.scaleLinear()//d3v4
-    .range([0,width*2])
-    .domain([0,data.length*2])
+    .range([0,width])
+    .domain([0,data.length+1]);
+*/
 
-var max = 100;//d3.max(data,100);
-var height = max * boxheight/2;
+markAdjustment=3; //for adding white space between squares and align them to the center of ticks
+
+
+var x = d3.scaleBand()
+    .rangeRound([0, width])
+    .paddingInner(0.05)
+    .paddingOuter(0.05)
+    .align(0.1);
+
+x.domain(data.map(function(d,i) { return i+1; }));
+
+var xbar=d3.scaleBand()
+    .rangeRound([25, width])
+    .paddingInner(0.05)
+    .align(0.1);
+
+console.log(xbar.bandwidth())
+xbar.domain(data.map(function(d,i) { return i; }));
+/*
+var xbar = d3.scaleLinear()//d3v4
+  .range([(-1*boxheight/2)+ (markAdjustment/2),(width-(boxheight/2)+(markAdjustment/2))])
+      //.range([-7.5,width-(7.5)])
+        //.range([-0.25*boxheight,width-(0.25*boxheight)])
+        .domain([0,data.length+1])
+*/
+
+
+
+var height = 600;
 
 
 console.log(height);
@@ -34,8 +53,8 @@ var svg = d3.select("#main").append("svg")
     .attr("transform", translate(margin.left, margin.top + 0.5))
 
 var y = d3.scaleLinear() //d3v4
-    .domain([0, max])
-    .range([height/2,0])
+    .domain([0, 100])
+    .range([height,0])
 
 /*
 var color = d3.scaleOrdinal(d3.schemeCategory10)//d3v4
@@ -50,14 +69,15 @@ data.forEach(function(d){
 */
 
 var xAxis = d3.axisBottom()
-    .scale(x);
+    .scale(x)
+    .ticks(data.length);
 
 var yAxis = d3.axisLeft()
     .scale(y);
 
 svg.append("g")
     .attr("class", "x axis")
-    .attr("transform", "translate(0," + (height/2) + ")")
+    .attr("transform", "translate(0," + (height) + ")")
     .call(xAxis);
 
 svg.append("g")
@@ -65,24 +85,24 @@ svg.append("g")
     .call(yAxis);
 
 
-
 var groups = svg.selectAll(".group")
     .data(data)
       .enter().append("g")
-        .attr("transform", function(d,i){return "translate(" + x(i) + ", 0)"})
+        .attr("transform", function(d,i){console.log(xbar(i));return "translate(" + x(i+1) + ", 1)"})
         .attr("class", "group")
 
 var types = groups.selectAll(".type").data(function(d){//console.log(d);
-          return d3.range(0,d*0.25);
+  //console.log(d3.range(0,(height*d)/(100*boxheight)));
+          return d3.range(0,(height*d)/(100*boxheight));
           //console.log(d3.range(0,d));
         })
   .enter()
   .append("rect")
-  .attr("height", boxheight-0.5)
-        .attr("width", boxheight-0.5)
-        .attr("y", function(d){return ((height/2)-(boxheight))-(boxheight*d); })
+  .attr("height", boxheight-markAdjustment)
+        .attr("width", x.bandwidth()-markAdjustment)//boxheight-markAdjustment)
+        .attr("y", function(d,i){return ((height)-(boxheight))-(boxheight*d); })
         .attr("class", "type");
- 
+
 /*
 var types = groups.selectAll(".type")
     .data(function(d){return d.offsets})
@@ -98,5 +118,3 @@ types.selectAll("rect")
         .attr("width", boxheight-0.5)
         .attr("y", function(d){ return boxheight * d })
 */
-
-
