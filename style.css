@@ -1,0 +1,22 @@
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+    body {
+      font-family: sans-serif;
+      position: relative;
+      margin: 10px auto;
+    }
+
+.type{
+	fill:#F653A6;
+}
+.darktype{
+	fill:#AB274F;
+}
+g.group{
+	pointer-events: all;
+}
