@@ -1,4 +1,4 @@
-var boxheight = 10;
+var boxheight = 20;
 
 var data=[10,20,97,42,30,49,15,88,72,100];
 var margin = {top: 50, right: 50, bottom: 20, left: 100},
